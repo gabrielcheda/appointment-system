@@ -12,8 +12,14 @@ import {
   Activity,
 } from 'lucide-react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
+import { useParams } from 'next/navigation'
 
 export default function Dashboard() {
+  const t = useTranslations('dashboard')
+  const tStatus = useTranslations('status')
+  const params = useParams()
+  const locale = params.locale as string
   const [stats, setStats] = useState({
     totalToday: 0,
     confirmed: 0,
@@ -91,12 +97,12 @@ export default function Dashboard() {
 
   const getStatusBadge = (status: string) => {
     const badges: { [key: string]: { color: string; label: string } } = {
-      scheduled: { color: 'badge-gray', label: 'Agendado' },
-      confirmed: { color: 'badge-success', label: 'Confirmado' },
-      'in-progress': { color: 'badge-primary', label: 'Em Andamento' },
-      completed: { color: 'badge-success', label: 'Concluído' },
-      cancelled: { color: 'badge-danger', label: 'Cancelado' },
-      'no-show': { color: 'badge-warning', label: 'Faltou' },
+      scheduled: { color: 'badge-gray', label: tStatus('scheduled') },
+      confirmed: { color: 'badge-success', label: tStatus('confirmed') },
+      'in-progress': { color: 'badge-primary', label: tStatus('inProgress') },
+      completed: { color: 'badge-success', label: tStatus('completed') },
+      cancelled: { color: 'badge-danger', label: tStatus('cancelled') },
+      'no-show': { color: 'badge-warning', label: tStatus('noShow') },
     }
     const badge = badges[status] || badges.scheduled
     return <span className={`badge ${badge.color}`}>{badge.label}</span>
@@ -106,15 +112,15 @@ export default function Dashboard() {
     <div className="space-y-4 md:space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm md:text-base">Visão geral da clínica</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{t('title')}</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm md:text-base">{t('subtitle')}</p>
         </div>
         <Link
-          href="/appointments/new"
+          href={`/${locale}/appointments/new`}
           className="btn btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto"
         >
           <Calendar className="w-4 h-4 md:w-5 md:h-5" />
-          <span className="text-sm md:text-base">Nova Consulta</span>
+          <span className="text-sm md:text-base">{t('newAppointment')}</span>
         </Link>
       </div>
 
@@ -123,10 +129,10 @@ export default function Dashboard() {
         <div className="card">
           <div className="flex items-center justify-between">
             <div className="flex-1 min-w-0">
-              <p className="text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400">Consultas Hoje</p>
+              <p className="text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400">{t('appointmentsToday')}</p>
               <p className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mt-1 md:mt-2">{stats.totalToday}</p>
               <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {stats.confirmed} confirmadas
+                {stats.confirmed} {t('confirmed')}
               </p>
             </div>
             <div className="w-10 h-10 md:w-12 md:h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -138,9 +144,9 @@ export default function Dashboard() {
         <div className="card">
           <div className="flex items-center justify-between">
             <div className="flex-1 min-w-0">
-              <p className="text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400">Fila de Espera</p>
+              <p className="text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400">{t('queue')}</p>
               <p className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mt-1 md:mt-2">{stats.inQueue}</p>
-              <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-1">pacientes aguardando</p>
+              <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-1">{t('patientsWaiting')}</p>
             </div>
             <div className="w-10 h-10 md:w-12 md:h-12 bg-warning-100 dark:bg-warning-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
               <Users className="w-5 h-5 md:w-6 md:h-6 text-warning-600 dark:text-warning-400" />
@@ -151,13 +157,13 @@ export default function Dashboard() {
         <div className="card">
           <div className="flex items-center justify-between">
             <div className="flex-1 min-w-0">
-              <p className="text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400">Receita Hoje</p>
+              <p className="text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400">{t('revenueToday')}</p>
               <p className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mt-1 md:mt-2">
-                R$ {stats.revenue.toLocaleString('pt-BR')}
+                R$ {stats.revenue.toLocaleString(locale)}
               </p>
               <p className="text-xs md:text-sm text-success-600 dark:text-success-400 mt-1 flex items-center">
                 <TrendingUp className="w-3 h-3 md:w-4 md:h-4 mr-1" />
-                +12% vs ontem
+                +12% {t('vsYesterday')}
               </p>
             </div>
             <div className="w-10 h-10 md:w-12 md:h-12 bg-success-100 dark:bg-success-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -169,10 +175,10 @@ export default function Dashboard() {
         <div className="card">
           <div className="flex items-center justify-between">
             <div className="flex-1 min-w-0">
-              <p className="text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400">Pendentes</p>
+              <p className="text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400">{t('pending')}</p>
               <p className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mt-1 md:mt-2">{stats.pending}</p>
               <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {stats.cancelled} canceladas
+                {stats.cancelled} {t('cancelled')}
               </p>
             </div>
             <div className="w-10 h-10 md:w-12 md:h-12 bg-danger-100 dark:bg-danger-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -186,29 +192,29 @@ export default function Dashboard() {
         {/* Today's Timeline */}
         <div className="lg:col-span-2 card">
           <div className="flex items-center justify-between mb-4 md:mb-6">
-            <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">Agenda de Hoje</h2>
-            <Link href="/calendar" className="text-xs md:text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">
-              Ver Calendário
+            <h2 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">{t('todaysAgenda')}</h2>
+            <Link href={`/${locale}/calendar`} className="text-xs md:text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">
+              {t('viewCalendar')}
             </Link>
           </div>
 
           <div className="space-y-3 max-h-[500px] overflow-y-auto">
             {todayAppointments.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
-                <Calendar className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                <p>Nenhuma consulta agendada para hoje</p>
+              <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                <Calendar className="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" />
+                <p>{t('noAppointments')}</p>
               </div>
             ) : (
               todayAppointments.map((apt) => (
                 <div
                   key={apt.id}
-                  className="flex items-center space-x-4 p-4 rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-colors"
+                  className="flex items-center space-x-4 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/10 transition-colors"
                 >
                   <div className="text-center min-w-[80px]">
-                    <p className="text-sm font-semibold text-gray-900">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
                       {apt.startTime}
                     </p>
-                    <p className="text-xs text-gray-500">{apt.duration} min</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{apt.duration} min</p>
                   </div>
 
                   <div
@@ -217,18 +223,18 @@ export default function Dashboard() {
                   />
 
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900">
+                    <p className="font-semibold text-gray-900 dark:text-white">
                       {apt.patient?.firstName} {apt.patient?.lastName}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
                       {apt.professional?.name} • {apt.specialty}
                     </p>
-                    <p className="text-xs text-gray-500">{apt.room}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{apt.room}</p>
                   </div>
 
                   <div className="text-right">
                     {getStatusBadge(apt.status)}
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                       R$ {apt.price.toFixed(2)}
                     </p>
                   </div>
@@ -242,12 +248,12 @@ export default function Dashboard() {
         <div className="space-y-6">
           {/* Queue */}
           <div className="card">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Fila de Atendimento</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('queueManagement')}</h2>
             <div className="space-y-3">
               {mockQueue.filter((q) => q.status === 'waiting').length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  <Activity className="w-8 h-8 mx-auto mb-2 text-gray-300" />
-                  <p className="text-sm">Nenhum paciente na fila</p>
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                  <Activity className="w-8 h-8 mx-auto mb-2 text-gray-300 dark:text-gray-600" />
+                  <p className="text-sm">{t('noQueue')}</p>
                 </div>
               ) : (
                 mockQueue
@@ -280,34 +286,34 @@ export default function Dashboard() {
 
           {/* Upcoming Appointments */}
           <div className="card">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              Próximas Consultas
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+              {t('upcomingAppointments')}
             </h2>
             <div className="space-y-3">
               {upcomingAppointments.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  <Calendar className="w-8 h-8 mx-auto mb-2 text-gray-300" />
-                  <p className="text-sm">Nenhuma consulta próxima</p>
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                  <Calendar className="w-8 h-8 mx-auto mb-2 text-gray-300 dark:text-gray-600" />
+                  <p className="text-sm">{t('noAppointments')}</p>
                 </div>
               ) : (
                 upcomingAppointments.map((apt) => (
                   <div
                     key={apt.id}
-                    className="p-3 rounded-lg border border-gray-200 hover:border-primary-300 transition-colors"
+                    className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-600 transition-colors"
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <p className="text-sm font-semibold text-gray-900">
-                        {new Date(apt.date).toLocaleDateString('pt-BR', {
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                        {new Date(apt.date).toLocaleDateString(locale, {
                           day: '2-digit',
                           month: 'short',
                         })}
                       </p>
-                      <p className="text-sm text-gray-600">{apt.startTime}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">{apt.startTime}</p>
                     </div>
-                    <p className="text-sm text-gray-900">
+                    <p className="text-sm text-gray-900 dark:text-white">
                       {apt.patient?.firstName} {apt.patient?.lastName}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       {apt.professional?.name}
                     </p>
                   </div>
@@ -318,25 +324,25 @@ export default function Dashboard() {
 
           {/* Doctor Availability */}
           <div className="card">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              Profissionais Disponíveis
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+              {t('availableProfessionals')}
             </h2>
             <div className="space-y-2">
               {mockProfessionals.slice(0, 5).map((prof) => (
                 <div
                   key={prof.id}
-                  className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50"
+                  className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50"
                 >
                   <div className="flex items-center space-x-2">
                     <div
                       className="w-3 h-3 rounded-full"
                       style={{ backgroundColor: prof.color }}
                     />
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
                       {prof.name.split(' ')[0]} {prof.name.split(' ')[prof.name.split(' ').length - 1]}
                     </p>
                   </div>
-                  <span className="badge badge-success text-xs">Disponível</span>
+                  <span className="badge badge-success text-xs">{t('available')}</span>
                 </div>
               ))}
             </div>
