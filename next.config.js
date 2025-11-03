@@ -4,8 +4,10 @@ const withNextIntl = require('next-intl/plugin')('./i18n/request.ts')
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  output: 'export', // Adicione esta linha
   images: {
     domains: ['localhost'],
+    unoptimized: true, // Necessário para export estático
   },
 }
 
