@@ -1,11 +1,6 @@
-import createMiddleware from 'next-intl/middleware'
-
-export default createMiddleware({
-  locales: ['pt-BR', 'en', 'es'],
-  defaultLocale: 'pt-BR',
-  localePrefix: 'always'
-})
+// Middleware disabled for static export compatibility
+// Static sites on GitHub Pages don't support middleware
 
 export const config = {
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
+  matcher: []
 }

@@ -7,6 +7,9 @@ import { Sidebar } from '@/components/layout/Sidebar'
 import { TopBar } from '@/components/layout/TopBar'
 import { MobileMenuProvider } from '@/components/providers/MobileMenuProvider'
 
+export const dynamic = 'force-static'
+export const dynamicParams = false
+
 type Props = {
   children: ReactNode
   params: Promise<{ locale: string }>
