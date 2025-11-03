@@ -3,12 +3,13 @@
 import { useState } from 'react'
 import { Globe } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
+import { locales, localeNames, localeFlags, type Locale } from '@/i18n/config'
 
-const languages = [
-  { code: 'pt-BR', name: 'Português', flag: '🇧🇷' },
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-]
+const languages = locales.map((code) => ({
+  code,
+  name: localeNames[code],
+  flag: localeFlags[code],
+}))
 
 export function LanguageSwitcher({ currentLocale }: { currentLocale: string }) {
   const [isOpen, setIsOpen] = useState(false)
